@@ -1,2 +1,1 @@
-# stream-api-examples
-Stream API questions
+Few examples of Stream API for practice purpose.
