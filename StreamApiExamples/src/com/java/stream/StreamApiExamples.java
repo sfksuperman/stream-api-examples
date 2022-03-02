@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.IntSummaryStatistics;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -175,12 +176,12 @@ public class StreamApiExamples {
 		// 20. Print the count of active and inactive employees in each department: There are 2 ways we can do.
 		System.out.println("20:");
 			// 1. using Map<>
-			System.out.println("        using Map<>:" );
+			System.out.println("using Map<>:" );
 			Map<String, Long> countOfEmpByStatus = listOfEmp.stream().collect(Collectors.groupingBy(Employee::getStatus, Collectors.counting()));
 			countOfEmpByStatus.entrySet().forEach(i-> System.out.println(i.getKey() + " = " + i.getValue()));
 			
 			// 2. using filter()
-			System.out.println("        using filter():" );
+			System.out.println("using filter():" );
 			long activeEmp = listOfEmp.stream().filter(i-> "active".equals(i.getStatus())).count();
 			long inactiveEmp = listOfEmp.stream().filter(i-> "inactive".equals(i.getStatus())).count();
 			System.out.println("active employee = " + activeEmp + "\n" + "inactive employee = " + inactiveEmp);
@@ -192,7 +193,51 @@ public class StreamApiExamples {
 						Collectors.reducing(BinaryOperator.maxBy(Comparator.comparing(Employee::getSalary)))));
 		maxSalaryDeptWise.entrySet()
 				.forEach(i -> System.out.println("dept " + i.getKey() + " top emp is: " + i.getValue()));
-        
+		
+		System.out.println("--------------------------------------");
+		System.out.println("---STRING CONVERSION EXAMPLES BELOW---");
+		System.out.println("--------------------------------------");
+		
+		//1 Convert `List<String>` to `List<Integer>`
+		List<String> l1 = Arrays.asList("1", "2", "3");
+		List<Integer> r1 = l1.stream().map(Integer::parseInt).collect(Collectors.toList());
+		System.out.println("1: " + r1);
+		//the longer full lambda version:
+		List<Integer> r11 = l1.stream().map(s -> Integer.parseInt(s)).collect(Collectors.toList());
+		System.out.println("1: by lambda: " + r11);
+		 
+		//2 Convert `List<String>` to `int[]`
+		int[] r2 = l1.stream().mapToInt(Integer::parseInt).toArray();
+		System.out.println("2: " + Arrays.toString(r2));
+		 
+		//3 Convert `String[]` to `List<Integer>`
+		String[] a1 = {"4", "5", "6"};
+		List<Integer> r3 = Stream.of(a1).map(Integer::parseInt).collect(Collectors.toList());
+		System.out.println("3: " + r3);
+		 
+		//4 Convert `String[]` to `int[]`
+		int[] r4 = Stream.of(a1).mapToInt(Integer::parseInt).toArray();
+		System.out.println("4: " + Arrays.toString(r4));
+		 
+		//5 Convert `String[]` to `List<Double>`
+		List<Double> r5 = Stream.of(a1).map(Double::parseDouble).collect(Collectors.toList());
+		System.out.println("5: " + r5);
+		
+		//6 (bonus) Convert `int[]` to `String[]`
+		int[] a2 = {7, 8, 9};
+		String[] r6 = Arrays.stream(a2).mapToObj(Integer::toString).toArray(String[]::new);
+		System.out.println("6: " + Arrays.toString(r6));
+		
+		//7 Convert 'Stream' to 'List<String>'
+		Stream<String> tokenStream = Stream.of("A", "B", "C", "D");
+		List<String> tokenList = tokenStream.collect(Collectors.toList());
+		System.out.println("7: " + tokenList); 
+
+		//8 Convert 'Stream' to 'LinkedList'
+		Stream<String> tokenStream2 = Arrays.asList("A", "B", "C", "D").stream();
+		List<String> tokenList2 = tokenStream2.collect(Collectors.toCollection(LinkedList::new));
+		System.out.println("8: " + tokenList2);
+		
 	}
 
 }
