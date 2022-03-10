@@ -5,3 +5,4 @@ Few examples of Stream API for practice purpose which include:
     b) List<String>` to `int[]
     c) String[]` to `List<Integer>
     ..many more
+3. 5 ways of traversing a hashmap.
