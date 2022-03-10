@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IntSummaryStatistics;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BinaryOperator;
@@ -90,9 +93,9 @@ public class StreamApiExamples {
 		List<Integer> numberFor = Arrays.asList(2,3,4,5);
 		numberFor.stream().map(x->x*x).forEach(y->System.out.println("6. " + y));
 		
-		// 7. 
-		List<Integer> numberFor2 = Arrays.asList(2,3,4,5);
-		int even = numberFor2.stream().filter(x->x%2==0).reduce(0,(ans,i)-> ans+i);
+		// 7. Add the value of only even number from given list of numbers
+		List<Integer> numberFor2 = Arrays.asList(2,3,4,5,2);
+		int even = numberFor2.stream().filter(x -> x % 2 == 0).reduce(0, (ans, i) -> ans + i);
 		System.out.println("7. " + even);
 		
 		// 8. Count the number of empty string; can be done using isBlank() also
@@ -168,7 +171,7 @@ public class StreamApiExamples {
 		Map<Integer, Long> empCountDeptWise = listOfEmp.stream().collect(Collectors.groupingBy(Employee::getDeptId, Collectors.counting()));
 		empCountDeptWise.entrySet().forEach(i-> System.out.println(i.getKey() + " = " + i.getValue()));
 		
-		// 19. Print active and inactive employees in each department
+		// 19. Print active and inactive employees of each department
 		System.out.println("19:");
 		Map<String, List<Employee>> empByStatus = listOfEmp.stream().collect(Collectors.groupingBy(Employee::getStatus, Collectors.toList()));
 		empByStatus.entrySet().forEach(i-> System.out.println(i.getKey() + "---" + i.getValue()));
@@ -198,7 +201,7 @@ public class StreamApiExamples {
 		System.out.println("---STRING CONVERSION EXAMPLES BELOW---");
 		System.out.println("--------------------------------------");
 		
-		//1 Convert `List<String>` to `List<Integer>`
+		// 1. Convert `List<String>` to `List<Integer>`
 		List<String> l1 = Arrays.asList("1", "2", "3");
 		List<Integer> r1 = l1.stream().map(Integer::parseInt).collect(Collectors.toList());
 		System.out.println("1: " + r1);
@@ -206,37 +209,79 @@ public class StreamApiExamples {
 		List<Integer> r11 = l1.stream().map(s -> Integer.parseInt(s)).collect(Collectors.toList());
 		System.out.println("1: by lambda: " + r11);
 		 
-		//2 Convert `List<String>` to `int[]`
+		// 2. Convert `List<String>` to `int[]`
 		int[] r2 = l1.stream().mapToInt(Integer::parseInt).toArray();
 		System.out.println("2: " + Arrays.toString(r2));
 		 
-		//3 Convert `String[]` to `List<Integer>`
+		// 3. Convert `String[]` to `List<Integer>`
 		String[] a1 = {"4", "5", "6"};
 		List<Integer> r3 = Stream.of(a1).map(Integer::parseInt).collect(Collectors.toList());
 		System.out.println("3: " + r3);
 		 
-		//4 Convert `String[]` to `int[]`
+		// 4. Convert `String[]` to `int[]`
 		int[] r4 = Stream.of(a1).mapToInt(Integer::parseInt).toArray();
 		System.out.println("4: " + Arrays.toString(r4));
 		 
-		//5 Convert `String[]` to `List<Double>`
+		// 5. Convert `String[]` to `List<Double>`
 		List<Double> r5 = Stream.of(a1).map(Double::parseDouble).collect(Collectors.toList());
 		System.out.println("5: " + r5);
 		
-		//6 (bonus) Convert `int[]` to `String[]`
+		// 6. (bonus) Convert `int[]` to `String[]`
 		int[] a2 = {7, 8, 9};
 		String[] r6 = Arrays.stream(a2).mapToObj(Integer::toString).toArray(String[]::new);
 		System.out.println("6: " + Arrays.toString(r6));
 		
-		//7 Convert 'Stream' to 'List<String>'
+		// 7. Convert 'Stream' to 'List<String>'
 		Stream<String> tokenStream = Stream.of("A", "B", "C", "D");
 		List<String> tokenList = tokenStream.collect(Collectors.toList());
 		System.out.println("7: " + tokenList); 
 
-		//8 Convert 'Stream' to 'LinkedList'
+		// 8. Convert 'Stream' to 'LinkedList'
 		Stream<String> tokenStream2 = Arrays.asList("A", "B", "C", "D").stream();
 		List<String> tokenList2 = tokenStream2.collect(Collectors.toCollection(LinkedList::new));
 		System.out.println("8: " + tokenList2);
+		
+		System.out.println("------------------------------------");
+		System.out.println("---5 WAYS OF TRAVERSING A HASHMAP---");
+		System.out.println("------------------------------------");
+				
+		Map<Integer, Employee> hashMap = new HashMap<Integer, Employee>();
+		hashMap.put(1, new Employee(101, "siva", 101, 2000, "active"));
+		hashMap.put(2, new Employee(102, "reddy", 101, 5000, "active"));
+		hashMap.put(3, new Employee(103, "raju", 102, 6000, "inactive"));
+		hashMap.put(4, new Employee(104, "shivam", 102, 4000, "inactive"));
+		hashMap.put(5, new Employee(105, "bob", 103, 3500, "active"));
+		hashMap.put(6, new Employee(106, "alice", 103, 3500, "inactive"));
+		hashMap.put(7, new Employee(107, "srinu", 104, 3500, "active"));
+
+		// 1. Iterate a HashMap using EntrySet Iterator
+		Iterator<Entry<Integer, Employee>> firstIterator = hashMap.entrySet().iterator();
+		while (firstIterator.hasNext()) {
+			Entry<Integer, Employee> entry = firstIterator.next();
+			System.out.println("1: " + entry.getKey() + " = " + entry.getValue());
+		}
+
+		// 2. Iterate a HashMap using KeySet Iterator
+		System.out.println();
+		Iterator<Integer> secondIterator = hashMap.keySet().iterator();
+		while (secondIterator.hasNext()) {
+			Integer key = secondIterator.next();
+			System.out.println("2: " + key + " = " + hashMap.get(key));
+		}
+
+		// 3. Iterate a HashMap using for-each loop
+		System.out.println();
+		for (Map.Entry<Integer, Employee> entry : hashMap.entrySet()) {
+			System.out.println("3: " + entry.getKey() + " = " + entry.getValue());
+		}
+
+		// 4. Iterate a HashMap using lambda expression
+		System.out.println();
+		hashMap.forEach((key, value) -> System.out.println("4: " + key + " = " + value));
+
+		// 5. Iterate a HashMap using Stream API
+		System.out.println();
+		hashMap.entrySet().stream().forEach(i -> System.out.println("5: " + i.getKey() + " = " + i.getValue()));
 		
 	}
 
